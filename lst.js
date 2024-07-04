@@ -1,16 +1,16 @@
 // Función modificada para calcular el número mínimo de antenas y sus coordenadas
 function minimoNumeroAntenas(areaTotal, porcentajeCobertura, areaCoberturaAntena, costoImplementacion, costoPanelesSolares, numPersonas) {
-    // Calcular la longitud del lado del área cuadrada
-    const ladoCuadrado = Math.sqrt(areaTotal);
-
-    // Calcular el lado del cuadrado de cobertura de una antena en metros
-    const ladoCoberturaAntena = Math.sqrt(areaCoberturaAntena);
+    // Calcular el área total en metros cuadrados
+    const areaTotalMetrosCuadrados = areaTotal * 1000000; // Convertir km² a metros cuadrados
 
     // Número de personas que puede cubrir cada antena
     const personasPorAntena = 30;
 
     // Calcular el número mínimo de antenas necesarias
     const numAntenasNecesarias = Math.ceil(numPersonas / personasPorAntena);
+
+    // Calcular el lado del cuadrado de cobertura de una antena en metros
+    const ladoCoberturaAntena = Math.sqrt(areaCoberturaAntena);
 
     // Número de antenas necesarias en cada dimensión (horizontal y vertical)
     const numAntenasLado = Math.ceil(Math.sqrt(numAntenasNecesarias));
@@ -36,7 +36,7 @@ function minimoNumeroAntenas(areaTotal, porcentajeCobertura, areaCoberturaAntena
 
     // Aseguramos cubrir al menos el 95% del área
     const areaCoberturaTotal = numAntenasTotal * areaCoberturaAntena;
-    const areaNecesaria = porcentajeCobertura * areaTotal;
+    const areaNecesaria = porcentajeCobertura * areaTotalMetrosCuadrados;
 
     // Si el área de cobertura total es suficiente, retornamos el número de antenas calculado y el costo total
     if (areaCoberturaTotal >= areaNecesaria) {
