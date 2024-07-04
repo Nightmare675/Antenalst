@@ -1,0 +1,80 @@
+// Función para calcular el número mínimo de antenas y el costo total de implementación
+function calcularMinimoNumeroAntenas(areaTotal, porcentajeCobertura, radioAntena, costoImplementacion) {
+    // Calcular el lado del área cuadrada
+    const ladoCuadrado = Math.sqrt(areaTotal);
+
+    // Calcular el diámetro de cobertura de una antena
+    const diametroAntena = 2 * radioAntena;
+
+    // Calcular el número de antenas necesarias en cada dimensión
+    const numAntenasPorLado = Math.ceil(ladoCuadrado / diametroAntena);
+    const distanciaEntreAntenas = ladoCuadrado / numAntenasPorLado;
+
+    // Inicializar el número total de antenas y el área total cubierta
+    let numAntenasTotal = 0;
+    let areaCoberturaTotal = 0;
+
+    // Iterar sobre las posiciones de la cuadrícula para colocar las antenas
+    for (let i = 0; i < numAntenasPorLado; i++) {
+        for (let j = 0; j < numAntenasPorLado; j++) {
+            // Calcular las coordenadas del centro de la antena
+            const x = i * distanciaEntreAntenas + distanciaEntreAntenas / 2;
+            const y = j * distanciaEntreAntenas + distanciaEntreAntenas / 2;
+
+            // Calcular el área de cobertura de la antena (círculo)
+            const areaCoberturaAntena = Math.PI * radioAntena * radioAntena;
+
+            // Verificar si la antena cubre parte del área total
+            if (verificarCobertura(x, y, radioAntena, ladoCuadrado)) {
+                // Sumar el área de cobertura de la antena a la cobertura total
+                areaCoberturaTotal += areaCoberturaAntena;
+
+                // Contar la antena como parte del número total de antenas
+                numAntenasTotal++;
+            }
+        }
+    }
+
+    // Calcular el área mínima necesaria para cumplir con el porcentaje de cobertura
+    const areaNecesaria = porcentajeCobertura * areaTotal;
+
+    // Verificar si el área cubierta es suficiente
+    if (areaCoberturaTotal >= areaNecesaria) {
+        return { numAntenas: numAntenasTotal, costoTotal: numAntenasTotal * costoImplementacion };
+    }
+
+    // Si no es suficiente, calcular antenas adicionales necesarias
+    let antenasAdicionales = Math.ceil((areaNecesaria - areaCoberturaTotal) / areaCoberturaAntena);
+
+    // Calcular el número total de antenas (incluyendo las adicionales)
+    const numAntenasConAdicionales = numAntenasTotal + antenasAdicionales;
+
+    // Calcular el costo total de implementación
+    const costoTotal = numAntenasConAdicionales * costoImplementacion;
+
+    return { numAntenas: numAntenasConAdicionales, costoTotal: costoTotal };
+}
+
+// Función para verificar si una antena cubre parte del área total
+function verificarCobertura(x, y, radioAntena, ladoCuadrado) {
+    // Calcular los límites del área cuadrada
+    const mitadLado = ladoCuadrado / 2;
+    const minX = -mitadLado;
+    const maxX = mitadLado;
+    const minY = -mitadLado;
+    const maxY = mitadLado;
+
+    // Verificar si el círculo de cobertura de la antena intersecta con el área cuadrada
+    return (x - radioAntena <= maxX && x + radioAntena >= minX &&
+            y - radioAntena <= maxY && y + radioAntena >= minY);
+}
+
+// Ejemplo de uso
+const areaTotal = 2180; // Área total en metros cuadrados
+const porcentajeCobertura = 0.95; // Porcentaje de cobertura requerido (95%)
+const radioAntena = 160; // Radio de cobertura de una antena en metros
+const costoImplementacion = 199; // Costo de implementación de cada antena en dólares
+
+const resultado = calcularMinimoNumeroAntenas(areaTotal, porcentajeCobertura, radioAntena, costoImplementacion);
+console.log(`El número mínimo de antenas necesario es: ${resultado.numAntenas}`);
+console.log(`El costo total de implementación es: ${resultado.costoTotal} dólares`);
